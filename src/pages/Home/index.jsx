@@ -5,10 +5,11 @@ import axios from 'axios';
 import { Divider, Grid, Typography } from '@mui/material';
 import './Home.scss';
 import CardItem from '../../components/CardItem';
-const URL = 'http://localhost:3001';
+const URL = import.meta.env.VITE_URL_BACK;
 
 const socket = io(URL);
 function Home() {
+  console.log(import.meta.env.VITE_URL_BACK)
   const [videoAtual, setVideoAtual] = useState("");
   const [listaVideo, setListaVideo] = useState([]);
 
