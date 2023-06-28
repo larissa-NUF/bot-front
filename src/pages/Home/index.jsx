@@ -9,55 +9,60 @@ const URL = import.meta.env.VITE_URL_BACK;
 
 const socket = io(URL);
 function Home() {
-  console.log(import.meta.env.VITE_URL_BACK)
   const [videoAtual, setVideoAtual] = useState("");
   const [listaVideo, setListaVideo] = useState([]);
-
+  const [skip, setSkip] = useState(false);
 
 
   useEffect(() => {
     axios.post(URL + '/listar')
       .then(response => {
-        setListaVideo(response.data);
-        console.log(response.data[0].url)
+        setListaVideo(response.data)
         setVideoAtual(response.data[0].url)
       })
       .catch(error => {
         console.error(error);
       });
 
-    socket.on("video", (data) => {
-      console.log(data)
+    socket.on("add", (data) => {
       if (data != null) {
-        setListaVideo(oldArray => [...oldArray, data]);
+        return setListaVideo(oldArray => [...oldArray, data]);
 
       }
     })
-    socket.emit("add", "mensagem video")
     socket.on("delete", (data) => {
-      console.log(data)
       setListaVideo(oldValues => {
         return oldValues.filter((_, i) => i !== Number(data))
       })
     })
-
+    socket.on("skip", function () {
+      setSkip(true);
+    })
 
   }, []);
 
-  const proximoVideo = async () => {
-    setVideoAtual(listaVideo[1].url)
-    await axios.delete(URL + '/listar/' + listaVideo[0]._id)
-      .then(response => {
-        console.log('próximo video')
-        setListaVideo(oldValues => {
-          return oldValues.filter((_, i) => i !== 0)
+  async function proximoVideo () {
+    if (listaVideo.length > 1) {
+      setVideoAtual(listaVideo[1].url)
+      await axios.delete(URL + '/listar/' + listaVideo[0]._id)
+        .then(response => {
+          setListaVideo(oldValues => {
+            return oldValues.filter((_, i) => i !== 0)
+          })
         })
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
+        .catch(error => {
+          console.error(error);
+        });
+    }
 
+  }
+  useEffect(() => {
+    if (skip && listaVideo.length > 1){
+      proximoVideo()
+      setSkip(false)
+      socket.emit("skipOk", 'ok');
+    }
+  }, [skip, listaVideo])
 
   /* const deleteByIndex = async () => {
     await axios.delete(URL + '/listar/' + listaVideo[1]._id)
@@ -81,8 +86,8 @@ function Home() {
         </Grid>
         <Grid item xs={4} paddingRight={3} paddingLeft={2}>
           <Typography variant='h2' fontSize={50} textAlign={'center'} mb={3}>Playlist do chat</Typography>
-          <Divider/>
-          <div>{listaVideo.map((entry, index) => {
+          <Divider />
+          {listaVideo && <div>{listaVideo.map((entry, index) => {
             if (index != 0) return (
               <div key={entry._id}>
                 <CardItem data={entry} index={index} />
@@ -92,7 +97,7 @@ function Home() {
           }
 
           )}
-          </div>
+          </div>}
         </Grid>
       </Grid>
 

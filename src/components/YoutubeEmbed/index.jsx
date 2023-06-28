@@ -4,7 +4,6 @@ import './YoutubeEmbed.scss';
 import { Box } from "@mui/material";
 
 function YoutubeEmbed({ embedId, onEnded }) {
-  console.log(embedId)
   return (
     <div className="video-responsive">
       {embedId && <ReactPlayer url={embedId}
