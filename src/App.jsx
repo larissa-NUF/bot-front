@@ -1,16 +1,20 @@
-import { ScopedCssBaseline, Typography } from '@mui/material'
+import { ScopedCssBaseline, ThemeProvider, Typography } from '@mui/material'
 import { Outlet } from 'react-router-dom'
-import './App.scss'
+import * as Styled from "./App.styled";
+import { theme } from './theme';
 
 function App() {
 
   return (
     <ScopedCssBaseline>
-      <div className='layout'>
-        <div className='navbar'>
-        </div>
+      <ThemeProvider theme={theme}>
+      <Styled.Layout>
+        <Styled.Navbar>
+        </Styled.Navbar>
         <Outlet />
-      </div>
+      </Styled.Layout>
+      </ThemeProvider>
+      
     </ScopedCssBaseline>
   )
 }

@@ -1,68 +1,74 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import YoutubeEmbed from '../../components/YoutubeEmbed';
+import Player from '../../components/Player';
 import axios from 'axios';
-import { Divider, Grid, Typography } from '@mui/material';
-import './Home.scss';
+import { Box, Card, CircularProgress, Divider, Grid, Typography } from '@mui/material';
+import * as Styled from "./Home.styled";
 import CardItem from '../../components/CardItem';
+import Carregando from '../../components/Carregando';
 const URL = import.meta.env.VITE_URL_BACK;
 
 const socket = io(URL);
 function Home() {
-  const [videoAtual, setVideoAtual] = useState("");
+  const [videoAtual, setVideoAtual] = useState({});
   const [listaVideo, setListaVideo] = useState([]);
-  const [skip, setSkip] = useState(false);
-
-
+  const [carregandoPlaylist, setCarregandoPlaylist] = useState(true);
+  //const [carregandoVideo, setCarregandoVideo] = useState(true);
+  //TODO update tocando
   useEffect(() => {
-    axios.post(URL + '/listar')
+    refreshPlaylist()
+    refreshVideoAtual()
+
+    socket.on("refreshVideoAtual", (data) => {
+      refreshVideoAtual()
+    })
+    socket.on("refreshPlaylist", (data) => {
+      refreshPlaylist()
+    })
+    socket.on("delete", (data) => {
+      refreshPlaylist()
+    })
+    socket.on("skip", function () {
+      proximoVideo()
+    })
+    socket.on("promote", (data) => {
+      refreshPlaylist()
+    })
+
+  }, []);
+
+  async function refreshVideoAtual() {
+    axios.get(URL + '/listar-tocando')
       .then(response => {
-        setListaVideo(response.data)
-        setVideoAtual(response.data[0].url)
+        setVideoAtual(response.data)
       })
       .catch(error => {
         console.error(error);
       });
 
-    socket.on("add", (data) => {
-      if (data != null) {
-        return setListaVideo(oldArray => [...oldArray, data]);
-
-      }
-    })
-    socket.on("delete", (data) => {
-      setListaVideo(oldValues => {
-        return oldValues.filter((_, i) => i !== Number(data))
+  }
+  async function refreshPlaylist() {
+    axios.get(URL + '/listar-playlist')
+      .then(response => {
+        setListaVideo(response.data)
+        console.log(response)
       })
-    })
-    socket.on("skip", function () {
-      setSkip(true);
-    })
-
-  }, []);
-
-  async function proximoVideo () {
-    if (listaVideo.length > 1) {
-      setVideoAtual(listaVideo[1].url)
-      await axios.delete(URL + '/listar/' + listaVideo[0]._id)
-        .then(response => {
-          setListaVideo(oldValues => {
-            return oldValues.filter((_, i) => i !== 0)
-          })
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    }
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(()=>{
+        setCarregandoPlaylist(false)
+      })
 
   }
-  useEffect(() => {
-    if (skip && listaVideo.length > 1){
-      proximoVideo()
-      setSkip(false)
-      socket.emit("skipOk", 'ok');
-    }
-  }, [skip, listaVideo])
+  async function proximoVideo() {
+    axios.post(URL + '/skip')
+      .then(response => {
+        refreshPlaylist()
+        refreshVideoAtual()
+      });
+
+  }
 
   /* const deleteByIndex = async () => {
     await axios.delete(URL + '/listar/' + listaVideo[1]._id)
@@ -78,28 +84,36 @@ function Home() {
   }; */
   return (
     <>
-      <Grid container >
+      <Styled.Container container >
         <Grid item xs={8}>
-          <div className='video'>
-            <YoutubeEmbed embedId={videoAtual} onEnded={proximoVideo} />
-          </div>
-        </Grid>
-        <Grid item xs={4} paddingRight={3} paddingLeft={2}>
-          <Typography variant='h2' fontSize={50} textAlign={'center'} mb={3}>Playlist do chat</Typography>
-          <Divider />
-          {listaVideo && <div>{listaVideo.map((entry, index) => {
-            if (index != 0) return (
-              <div key={entry._id}>
-                <CardItem data={entry} index={index} />
-              </div>
-            )
+          <Styled.Video>
+            <div>
+              <Player embedId={videoAtual?.url} onEnded={proximoVideo} />
+              <Styled.Titulo variant='h3' mt={3}>{videoAtual?.titulo} - {videoAtual?.criador}</Styled.Titulo>
+            </div>
 
-          }
 
-          )}
-          </div>}
+          </Styled.Video>
         </Grid>
-      </Grid>
+        <Grid item xs={4} paddingLeft={3}>
+          <Styled.Playlist>
+            <Styled.Titulo variant='h2' textAlign={'center'} mt={1} mb={2}>PLAYLIST DO CHAT</Styled.Titulo>
+            <Divider />
+            {carregandoPlaylist && <Carregando />}
+            {listaVideo && <div>{listaVideo.map((entry, index) => {
+              return (
+                <div key={entry.id}>
+                  <CardItem data={entry} index={index + 1} />
+                </div>
+              )
+
+            }
+
+            )}
+            </div>}
+          </Styled.Playlist>
+        </Grid>
+      </Styled.Container>
 
     </>
   )

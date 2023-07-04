@@ -1,19 +1,28 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Divider, Grid, Link, Typography } from "@mui/material";
 import React from "react";
-import './CardItem.scss';
+import * as Styled from "./CardItem.styled";
 
 function CardItem({ data, index }) {
 
   return (
-    <div className="cardItem">
+    <Styled.Card>
 
-      <Grid container>
+      <Grid container mb={1.5}>
+        
+        <Grid item xs={1}>
+          <Styled.PosicaoCentro>
+          <Styled.Posicao variant="h6" className="titulo">
+                #{index}
+              </Styled.Posicao>
+          </Styled.PosicaoCentro>
+        
+        </Grid>
         <Grid item xs={11}>
           <div>
             <a href={data.link} target="_blank">
-              <Typography variant="h6" className="titulo">
+              <Styled.Titulo variant="h6" >
                 {data.titulo}
-              </Typography>
+              </Styled.Titulo>
             </a>
             <Typography variant="caption" display="block" gutterBottom >
               {data.criador}
@@ -24,15 +33,10 @@ function CardItem({ data, index }) {
         </Typography>
         
         </Grid>
-        <Grid item xs={1}>
-        <Typography variant="h6" className="titulo">
-                #{index}
-              </Typography>
-        </Grid>
         
       </Grid>
       <Divider/>
-    </div>
+    </Styled.Card>
     
   )
 
