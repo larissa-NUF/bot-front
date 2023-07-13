@@ -6,38 +6,51 @@ function CardItem({ data, index }) {
 
   return (
     <Styled.Card>
+      <Link href={data.url} target="_blank" underline="none">
+        <Grid container>
 
-      <Grid container mb={1.5}>
-        
-        <Grid item xs={1}>
-          <Styled.PosicaoCentro>
-          <Styled.Posicao variant="h6" className="titulo">
-                #{index}
-              </Styled.Posicao>
-          </Styled.PosicaoCentro>
-        
+          <Styled.ContainerPrincipal item xs={1}>
+
+            <Styled.Posicao variant="h6">
+              #{index}
+            </Styled.Posicao>
+
+
+          </Styled.ContainerPrincipal>
+          <Styled.ContainerPrincipal item xs={4}>
+
+            <Styled.Imagem src={data.imagem} />
+
+
+          </Styled.ContainerPrincipal>
+          <Styled.ContainerDetalhes item xs={7}>
+            <Styled.Detalhes>
+
+              <Styled.TituloVideoDiv>
+
+                <Styled.TituloVideo variant="h6">
+                  {data.titulo}
+                </Styled.TituloVideo>
+
+              </Styled.TituloVideoDiv>
+
+
+              <Typography variant="caption" display="block">
+                {data.criador}
+              </Typography>
+              <Typography variant="p" display="block">
+                {data.usuario}
+              </Typography>
+            </Styled.Detalhes>
+
+          </Styled.ContainerDetalhes>
+
         </Grid>
-        <Grid item xs={11}>
-          <div>
-            <a href={data.link} target="_blank">
-              <Styled.Titulo variant="h6" >
-                {data.titulo}
-              </Styled.Titulo>
-            </a>
-            <Typography variant="caption" display="block" gutterBottom >
-              {data.criador}
-            </Typography>
-          </div>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" className="usuario">
-          {data.usuario}
-        </Typography>
-        
-        </Grid>
-        
-      </Grid>
-      <Divider/>
+      </Link>
+      <Divider />
+
     </Styled.Card>
-    
+
   )
 
 };

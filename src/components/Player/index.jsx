@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactPlayer from 'react-player';
 import * as Styled from "./Player.styled";
 import { Typography } from "@mui/material";
 
-function Player({ embedId, onEnded, isFetching }) {
+function Player({ embedId, onEnded, isFetching, reproduzindo }) {
+  
   return (
     <div className="video-responsive">
       {embedId && <ReactPlayer url={embedId}
@@ -12,11 +13,11 @@ function Player({ embedId, onEnded, isFetching }) {
             playerVars: { showinfo: 1 }
           }
         }}
-        muted={true}
+        muted={false}
         autoPlay={true}
         onEnded={() => onEnded()}
         controls={true}
-        playing={true}
+        playing={reproduzindo}
         width='100%'
         height='33.5vw'
       />

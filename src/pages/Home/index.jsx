@@ -13,6 +13,7 @@ function Home() {
   const [videoAtual, setVideoAtual] = useState({});
   const [listaVideo, setListaVideo] = useState([]);
   const [carregandoPlaylist, setCarregandoPlaylist] = useState(true);
+  const [reproduzindo, setReproduzindo] = useState(false);
   //const [carregandoVideo, setCarregandoVideo] = useState(true);
   //TODO update tocando
   useEffect(() => {
@@ -51,17 +52,18 @@ function Home() {
     axios.get(URL + '/listar-playlist')
       .then(response => {
         setListaVideo(response.data)
-        console.log(response)
+        console.log(listaVideo)
       })
       .catch(error => {
         console.error(error);
       })
-      .finally(()=>{
+      .finally(() => {
         setCarregandoPlaylist(false)
       })
 
   }
   async function proximoVideo() {
+    setReproduzindo(true)
     axios.post(URL + '/skip')
       .then(response => {
         refreshPlaylist()
@@ -84,22 +86,30 @@ function Home() {
   }; */
   return (
     <>
-      <Styled.Container container >
-        <Grid item xs={8}>
+      <Styled.Container container spacing={3}>
+        <Grid item xs={12} md={8}>
           <Styled.Video>
             <div>
-              <Player embedId={videoAtual?.url} onEnded={proximoVideo} />
+              <Player embedId={videoAtual?.url} onEnded={proximoVideo} reproduzindo={reproduzindo} />
               <Styled.Titulo variant='h3' mt={3}>{videoAtual?.titulo} - {videoAtual?.criador}</Styled.Titulo>
             </div>
 
 
           </Styled.Video>
         </Grid>
-        <Grid item xs={4} paddingLeft={3}>
+        <Grid item xs={12} md={4}>
           <Styled.Playlist>
             <Styled.Titulo variant='h2' textAlign={'center'} mt={1} mb={2}>PLAYLIST DO CHAT</Styled.Titulo>
-            <Divider />
+            <Styled.MaginDivider>
+              <Divider />
+            </Styled.MaginDivider>
             {carregandoPlaylist && <Carregando />}
+            {listaVideo.length == 0 && !carregandoPlaylist && <>
+              <Styled.SemVideo>
+                <Styled.Titulo>SEM VÍDEOS PARA REPRODUZIR EM SEGUIDA</Styled.Titulo>
+                <Typography>Digite <b>!addvideo {'<url>'}</b> para adicionar um vídeo na fila</Typography>
+              </Styled.SemVideo>
+            </>}
             {listaVideo && <div>{listaVideo.map((entry, index) => {
               return (
                 <div key={entry.id}>
@@ -112,8 +122,8 @@ function Home() {
             )}
             </div>}
           </Styled.Playlist>
-        </Grid>
-      </Styled.Container>
+        </Grid >
+      </Styled.Container >
 
     </>
   )

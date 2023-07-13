@@ -2,6 +2,7 @@ import { ScopedCssBaseline, ThemeProvider, Typography } from '@mui/material'
 import { Outlet } from 'react-router-dom'
 import * as Styled from "./App.styled";
 import { theme } from './theme';
+import Navbar from './components/Navbar/navbar';
 
 function App() {
 
@@ -9,8 +10,7 @@ function App() {
     <ScopedCssBaseline>
       <ThemeProvider theme={theme}>
       <Styled.Layout>
-        <Styled.Navbar>
-        </Styled.Navbar>
+        <Navbar/>
         <Outlet />
       </Styled.Layout>
       </ThemeProvider>
