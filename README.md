@@ -12,10 +12,12 @@ O aumcebot é um bot para twitch com o objetivo de criar playlist de vídeos com
 - HTML / CSS / JS
 - React
 - Web socket (socket.io)
+## Implantação em produção
+- Back end: hospedagem render
 
 # Como executar o projeto
 
-## Front end plugin
+## Front end 
 Pré-requisitos: Git, Node
 
 ```bash
@@ -23,6 +25,7 @@ Pré-requisitos: Git, Node
 git clone https://github.com/larissa-NUF/bot-front.git
 # entrar na pasta do projeto Plugin WordPress
 cd bot-front
+# adicionar as chaves no arquivo .env
 # executar o projeto
 npm run dev
 ```
