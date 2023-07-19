@@ -29,4 +29,4 @@ npm run dev
 
 # Autor
 
-[Larissa Nunes]([https://tecnologiaunica.com.br](https://github.com/larissa-NUF)https://github.com/larissa-NUF)
+[Larissa Nunes](https://github.com/larissa-NUF)
