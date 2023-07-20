@@ -24,6 +24,7 @@ const rowsMod = [
     createData('!delvideo', 'Exclui o vídeo na posição n da lista de reprodução'),
     createData('!promotevideo', 'Move o video indicado para a posição #1 da playlist'),
     createData('!skipvideo', 'Pula vídeo reproduzindo no momento'),
+    createData('!cleanlist', 'Limpa a lista de reprodução de vídeos'),
 ];
 
 function Documentacao() {

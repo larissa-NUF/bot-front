@@ -7,6 +7,8 @@ import * as Styled from "./Home.styled";
 import CardItem from '../../components/CardItem';
 import Carregando from '../../components/Carregando';
 const URL = import.meta.env.VITE_URL_BACK;
+import { useNavigate } from "react-router-dom";
+
 
 const socket = io(URL);
 function Home() {
@@ -16,6 +18,8 @@ function Home() {
   const [reproduzindo, setReproduzindo] = useState(false);
   //const [carregandoVideo, setCarregandoVideo] = useState(true);
   //TODO update tocando
+  const navigate = useNavigate();
+
   useEffect(() => {
     refreshPlaylist()
     refreshVideoAtual()
@@ -28,6 +32,9 @@ function Home() {
     })
     socket.on("delete", (data) => {
       refreshPlaylist()
+    })
+    socket.on("cleanlist", (data) => {
+      navigate(0);
     })
     socket.on("skip", function () {
       proximoVideo()
@@ -51,7 +58,7 @@ function Home() {
   async function refreshPlaylist() {
     axios.get(URL + '/listar-playlist')
       .then(response => {
-        setListaVideo(response.data)
+        setListaVideo(response.data ? response.data : {})
         console.log(listaVideo)
       })
       .catch(error => {
